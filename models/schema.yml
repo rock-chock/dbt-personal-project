@@ -1,0 +1,67 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: "Raw customers data from dbt Labs' BigQuery public dataset"
+    columns:
+      - name: customer_id
+        description: ""
+        tests:
+          - unique
+          - not_null
+
+      - name: first_name
+        description: ""
+
+      - name: last_name
+        description: ""
+
+  - name: stg_orders
+    description: "Raw orders data from dbt Labs' BigQuery public dataset"
+    columns:
+      - name: order_id
+        description: ""
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: ""
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+
+      - name: order_date
+        description: ""
+
+      - name: status
+        description: ""
+        tests:
+          - accepted_values:
+              values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
+
+  - name: customers
+    description: "One record per customer, provides insights on customer's orders"
+    columns:
+      - name: customer_id
+        description: ""
+        tests:
+          - unique
+          - not_null
+
+      - name: first_name
+        description: ""
+
+      - name: last_name
+        description: ""
+
+      - name: first_order_date
+        description: ""
+
+      - name: most_recent_order_date
+        description: ""
+
+      - name: number_of_orders
+        description: "NULL when a customer has not yet placed an order"
